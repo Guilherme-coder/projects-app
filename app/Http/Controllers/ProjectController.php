@@ -37,6 +37,7 @@ class ProjectController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'start_date' => 'required|date',
             'end_date' => 'required|date',
             'value' => 'decimal:2',
             'status' => 'required|in:A,I'
@@ -46,7 +47,6 @@ class ProjectController extends Controller
             return $this->error('Data Invalid', 422, $validator->errors());
 
         $requestData = $request->all();
-        $requestData['start_date'] = Carbon::now();
         $requestData['creator'] = Auth::user()->id;
 
         $created = $this->repo->create($requestData);

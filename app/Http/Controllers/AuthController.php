@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 
 class AuthController extends Controller
@@ -19,6 +20,7 @@ class AuthController extends Controller
     {
         if (Auth::attempt($request->only('email', 'password'))) {
             return $this->response('Authorized', 200, [
+                'name' => Auth::user()->name,
                 'token' => $request->user()->createToken('invoice')->plainTextToken
             ]);
         }
@@ -27,7 +29,14 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-//      adicionar validacoes
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails())
+            return $this->error('Data Invalid', 422, $validator->errors());
 
         $user = User::create([
             'name' => $request->name,

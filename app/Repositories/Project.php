@@ -13,7 +13,7 @@ class Project {
     }
 
     public function getAll(){
-        return $this->model->all();
+        return $this->model->paginate(15);
     }
 
     public function find($id){
